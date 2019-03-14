@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/result_cardView"
+    style="@style/CardViewStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/activity_vertical_margin"
+    android:layout_marginTop="2dp"
+    android:layout_marginRight="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="2dp">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/small_padding">
+
+        <TextView
+            android:id="@+id/result_player_name_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/proficiency_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/result_label_proficiency"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/result_player_name_textView" />
+
+        <TextView
+            android:id="@+id/result_player_proficiency_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            app:layout_constraintStart_toEndOf="@+id/proficiency_label_textView"
+            app:layout_constraintTop_toTopOf="@+id/proficiency_label_textView" />
+
+        <TextView
+            android:id="@+id/modifier_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/result_label_modifier"
+            app:layout_constraintEnd_toStartOf="@+id/result_player_modifier_textView"
+            app:layout_constraintTop_toTopOf="@+id/proficiency_label_textView" />
+
+        <TextView
+            android:id="@+id/result_player_modifier_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/reroll_player_button"
+            app:layout_constraintTop_toBottomOf="@+id/result_player_name_textView" />
+
+        <TextView
+            android:id="@+id/dice_roll_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/result_label_dice_roll"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/proficiency_label_textView" />
+
+        <TextView
+            android:id="@+id/result_player_dice_roll_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/small_padding"
+            app:layout_constraintStart_toEndOf="@id/dice_roll_label_textView"
+            app:layout_constraintTop_toTopOf="@id/dice_roll_label_textView"
+            app:layout_goneMarginEnd="@dimen/small_padding" />
+
+        <TextView
+            android:id="@+id/check_result_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/result_label_check_result"
+            app:layout_constraintEnd_toStartOf="@+id/result_player_check_result_textView"
+            app:layout_constraintTop_toTopOf="@id/dice_roll_label_textView" />
+
+        <TextView
+            android:id="@+id/result_player_check_result_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toStartOf="@+id/reroll_player_button"
+            app:layout_constraintTop_toTopOf="@id/dice_roll_label_textView" />
+
+        <TextView
+            android:id="@+id/outcome_label_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/result_label_outcome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/dice_roll_label_textView" />
+
+        <TextView
+            android:id="@+id/result_player_outcome_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/outcome_label_textView"
+            app:layout_constraintTop_toTopOf="@id/outcome_label_textView" />
+
+        <Button
+            android:id="@+id/reroll_player_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/small_padding"
+            android:text="@string/menu_title_reroll"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.v7.widget.CardView>
