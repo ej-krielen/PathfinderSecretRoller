@@ -1,10 +1,10 @@
 package nl.rekijan.pathfindersecretroller.utilities;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
 import nl.rekijan.pathfindersecretroller.R;
+import nl.rekijan.pathfindersecretroller.listener.DcDialogPickerListener;
 
 /**
  * Custom class for a dialog to pick a DC value by level and difficulty
@@ -25,37 +26,25 @@ import nl.rekijan.pathfindersecretroller.R;
 public class DcPickerDialog extends DialogFragment {
 
     private TextView dcValueTextView;
+    private DcDialogPickerListener callback;
 
-    /* The activity that creates an instance of this dialog fragment must
-     * implement this interface in order to receive event callbacks.
-     * Each method passes the DialogFragment in case the host needs to query it. */
-    public interface DcPickerDialogListener {
-        void onDialogPositiveClick();
-    }
-
-    // Use this instance of the interface to deliver action events
-    DcPickerDialogListener listener;
-
-    // Override the Fragment.onAttach() method to instantiate the NoticeDialogListener
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        // Verify that the host activity implements the callback interface
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            listener = (DcPickerDialogListener) context;
+            callback = (DcDialogPickerListener) getTargetFragment();
         } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(getActivity().toString()
-                    + " must implement NoticeDialogListener");
+            throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
         }
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        LayoutInflater inflater = getActivity().getLayoutInflater();
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
         View dialogLayout = inflater.inflate(R.layout.dc_picker_dialog, null);
-        final AppExtension app = (AppExtension) getActivity().getApplicationContext();
+        final AppExtension app = (AppExtension) requireActivity().getApplicationContext();
 
         //Get textView where the user gets a preview of the value his selection will pick
         dcValueTextView = dialogLayout.findViewById(R.id.dc_value_textView);
@@ -64,7 +53,7 @@ public class DcPickerDialog extends DialogFragment {
         Spinner levelSpinner = dialogLayout.findViewById(R.id.level_spinner);
 
         Integer[] levels = new Integer[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23};
-        ArrayAdapter<Integer> levelSpinnerAdapter = new ArrayAdapter<Integer>(getActivity(), android.R.layout.simple_spinner_item, levels);
+        ArrayAdapter<Integer> levelSpinnerAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, levels);
         levelSpinner.setAdapter(levelSpinnerAdapter);
         // Drop down layout style
         levelSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,8 +76,8 @@ public class DcPickerDialog extends DialogFragment {
 
         //Setup the spinner to choose the difficulty with
         Spinner difficultySpinner = dialogLayout.findViewById(R.id.difficulty_spinner);
-        String[] difficulty = new String[]{getActivity().getString(R.string.dc_picker_label_easy), getActivity().getString(R.string.dc_picker_label_medium), getActivity().getString(R.string.dc_picker_label_hard), getActivity().getString(R.string.dc_picker_label_incredible), getActivity().getString(R.string.dc_picker_label_ultimate)};
-        ArrayAdapter<String> difficultySpinnerAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, difficulty);
+        String[] difficulty = new String[]{requireActivity().getString(R.string.dc_picker_label_easy), requireActivity().getString(R.string.dc_picker_label_medium), requireActivity().getString(R.string.dc_picker_label_hard), requireActivity().getString(R.string.dc_picker_label_incredible), requireActivity().getString(R.string.dc_picker_label_ultimate)};
+        ArrayAdapter<String> difficultySpinnerAdapter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_spinner_item, difficulty);
         difficultySpinner.setAdapter(difficultySpinnerAdapter);
         // Drop down layout style
         difficultySpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -110,7 +99,7 @@ public class DcPickerDialog extends DialogFragment {
         });
 
         //Build the dialog
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.AlertDialogStyle);
 
         builder.setTitle(R.string.dc_picker_dialog_title)
                 .setView(dialogLayout) //Save our custom layout to it
@@ -119,7 +108,7 @@ public class DcPickerDialog extends DialogFragment {
                     public void onClick(DialogInterface dialogInterface, int i) {
                         //Save the DC from the level/difficulty combination, trigger the listener event, and close the dialog
                         app.saveDCvalue(Integer.parseInt(dcValueTextView.getText().toString()));
-                        listener.onDialogPositiveClick();
+                        callback.onPositiveClick();
                         dismiss();
                     }
                 })
@@ -136,8 +125,8 @@ public class DcPickerDialog extends DialogFragment {
     /**
      * Calculate the DC based on the level and difficulty and show a preview of it in the textView
      */
-    public void calculateDC() {
-        AppExtension app = (AppExtension) getActivity().getApplicationContext();
+    private void calculateDC() {
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
         int level = app.getDClevel();
         int difficulty = app.getDCdifficulty();
         int[][] dcValuesArray = new int[][]{

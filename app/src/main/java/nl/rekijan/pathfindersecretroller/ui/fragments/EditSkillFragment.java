@@ -2,16 +2,21 @@ package nl.rekijan.pathfindersecretroller.ui.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
+import nl.rekijan.pathfindersecretroller.MainActivity;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.models.PlayerModel;
 import nl.rekijan.pathfindersecretroller.models.SkillModel;
@@ -25,36 +30,46 @@ import static nl.rekijan.pathfindersecretroller.AppConstants.SKILL_MODEL_POSITIO
  * @author Erik-Jan Krielen ej.krielen@gmail.com
  * @since 7-3-2019
  */
-public class EditSkillActivity extends AppCompatActivity {
+public class EditSkillFragment extends Fragment {
 
     private EditText skillNameEditText;
     private int position;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_skill);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Back to parent activity
-
-        AppExtension app = (AppExtension) this.getApplicationContext();
-
-        // Get the Intent that started this activity and extract the information sent with it
-        Intent intent = getIntent();
-        position = intent.getIntExtra(SKILL_MODEL_POSITION, -1);
-
-        // Capture the layout's EditText and set the proper text
-        skillNameEditText = findViewById(R.id.skill_name_editText);
-        SkillModel skill = app.getSkillAdapter().getList().get(position);
-        skillNameEditText.setText(skill.getName());
+    public static EditSkillFragment newInstance(int position) {
+        EditSkillFragment fragment = new EditSkillFragment();
+        Bundle args = new Bundle();
+        args.putInt(SKILL_MODEL_POSITION, position);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_edit_skill, menu);
-        return true;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            position = getArguments().getInt(SKILL_MODEL_POSITION);
+        }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+        View fragmentView = inflater.inflate(R.layout.fragment_edit_skill, container, false);
+        final AppExtension app = (AppExtension) requireActivity().getApplicationContext();
+
+        // Capture the layout's EditText and set the proper text
+        skillNameEditText = fragmentView.findViewById(R.id.skill_name_editText);
+        SkillModel skill = app.getSkillAdapter().getList().get(position);
+        skillNameEditText.setText(skill.getName());
+
+        return fragmentView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_edit_skill, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -64,9 +79,6 @@ public class EditSkillActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_action_delete_edit_skill:
                 deleteSkillConfirm();
-                return true;
-            case R.id.menu_action_about:
-                CommonUtil.getInstance(EditSkillActivity.this).aboutInfo(EditSkillActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -78,7 +90,7 @@ public class EditSkillActivity extends AppCompatActivity {
      * calls {@link #deleteSkill()}
      */
     private void deleteSkillConfirm() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
         builder.setMessage(this.getString(R.string.dialog_delete_message_skill))
                 .setTitle(this.getString(R.string.dialog_delete_title_skill));
         builder.setPositiveButton(this.getString(R.string.dialog_about_confirm_deletion), new DialogInterface.OnClickListener() {
@@ -101,13 +113,15 @@ public class EditSkillActivity extends AppCompatActivity {
      * <p>Then close this activity</p>
      * called by {@link #deleteSkillConfirm()} ()} ()}
      */
-    public void deleteSkill() {
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    private void deleteSkill() {
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
         for (PlayerModel p : app.getPlayerAdapter().getList()) {
             p.getSkillModels().remove(position);
         }
         app.getSkillAdapter().remove(position);
-        finish();
+        MainActivity activity = (MainActivity) getActivity();
+        assert activity != null;
+        activity.removeFragment(this);
     }
 
     /**
@@ -115,11 +129,11 @@ public class EditSkillActivity extends AppCompatActivity {
      * <p>Save all the data and close this activity</p>
      * <p>Or instead just display an error when user tries to make a duplicate name</p>
      */
-    public void saveSkillInfo() {
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    private void saveSkillInfo() {
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
 
         String textFromEditText = skillNameEditText.getText().toString();
-        boolean isNameUnique = CommonUtil.getInstance(EditSkillActivity.this).isSkillNameUnique(textFromEditText, app.getSkillAdapter().getList());
+        boolean isNameUnique = CommonUtil.getInstance().isSkillNameUnique(textFromEditText, app.getSkillAdapter().getList());
         if (isNameUnique) {
             //Update all players, to reflect the change
             String oldName = app.getSkillAdapter().getList().get(position).getName();
@@ -133,9 +147,13 @@ public class EditSkillActivity extends AppCompatActivity {
             }
             app.getSkillAdapter().getList().get(position).setName(newName);
             app.saveData();
-            finish();
+            MainActivity activity = (MainActivity) getActivity();
+            assert activity != null;
+            activity.removeFragment(this);
         } else if (textFromEditText.equals(app.getSkillAdapter().getList().get(position).getName())) {
-            finish();
+            MainActivity activity = (MainActivity) getActivity();
+            assert activity != null;
+            activity.removeFragment(this);
         } else {
             Toast.makeText(app, app.getText(R.string.error_name_not_unique), Toast.LENGTH_LONG).show();
         }

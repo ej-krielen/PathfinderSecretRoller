@@ -1,16 +1,16 @@
 package nl.rekijan.pathfindersecretroller;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import nl.rekijan.pathfindersecretroller.ui.fragments.PlayersManagerActivity;
-import nl.rekijan.pathfindersecretroller.ui.fragments.SkillsManagerActivity;
+import nl.rekijan.pathfindersecretroller.ui.fragments.StartFragment;
 import nl.rekijan.pathfindersecretroller.utilities.CommonUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -21,15 +21,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         AppExtension app = (AppExtension) this.getApplicationContext();
 
-        //Setup RecyclerView by binding the adapter to it.
-        RecyclerView skillsRecyclerView = findViewById(R.id.skills_recyclerView);
-        skillsRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        skillsRecyclerView.setLayoutManager(llm);
-        skillsRecyclerView.setAdapter(app.getSkillAdapter());
+        //Add first fragment if fresh start
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, StartFragment.newInstance())
+                    .commit();
+        } else { //Set the action bar title and showing of the back button to previously stored values
+            if (!TextUtils.isEmpty(app.getActionBarTitle())) {
+                setActionBarTitle(app.getActionBarTitle());
+            }
+            if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(app.showBackNavigation());
+        }
     }
 
     @Override
@@ -39,6 +43,48 @@ public class MainActivity extends AppCompatActivity {
         app.saveData();
     }
 
+    /**
+     * Replace the current fragment with the new one
+     *
+     * @param newFragment the new fragment to add
+     */
+    public void replaceFragment(Fragment newFragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
+        //Enable the back button in action bar
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        AppExtension app = (AppExtension) this.getApplicationContext();
+        app.setShowBackNavigation(true);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        //Disable the back button in action bar only if it is the last fragment
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(getSupportFragmentManager().getBackStackEntryCount() > 1);
+        AppExtension app = (AppExtension) this.getApplicationContext();
+        app.setShowBackNavigation(getSupportFragmentManager().getBackStackEntryCount() > 1);
+        getSupportFragmentManager().popBackStack();
+        setActionBarTitle(app.getActionBarTitle());
+        return true;
+    }
+
+    public void setActionBarTitle(String title) {
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(title);
+        AppExtension app = (AppExtension) this.getApplicationContext();
+        app.setActionBarTitle(title);
+    }
+
+    public void removeFragment(Fragment fragment) {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.remove(fragment);
+        transaction.commit();
+        FragmentManager manager = getSupportFragmentManager();
+        manager.popBackStack();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -46,15 +92,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        //Other menu items are added by fragments
         switch (item.getItemId()) {
-            case R.id.menu_action_manage_players:
-                startActivity(new Intent(this, PlayersManagerActivity.class));
-                return true;
-            case R.id.menu_action_manage_skills:
-                startActivity(new Intent(this, SkillsManagerActivity.class));
-                return true;
             case R.id.menu_action_about:
-                CommonUtil.getInstance(MainActivity.this).aboutInfo(MainActivity.this);
+                CommonUtil.getInstance().aboutInfo(MainActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

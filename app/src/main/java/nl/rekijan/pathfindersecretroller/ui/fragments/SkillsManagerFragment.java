@@ -1,12 +1,17 @@
 package nl.rekijan.pathfindersecretroller.ui.fragments;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
 import nl.rekijan.pathfindersecretroller.R;
@@ -21,49 +26,55 @@ import nl.rekijan.pathfindersecretroller.utilities.CommonUtil;
  * @author Erik-Jan Krielen ej.krielen@gmail.com
  * @since 4-3-2019
  */
-public class SkillsManagerActivity extends AppCompatActivity {
+public class SkillsManagerFragment extends Fragment {
 
     private SkillEditAdapter mAdapter;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_skills_manager);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Back to parent activity
+    public static SkillsManagerFragment newInstance() {
+        return new SkillsManagerFragment();
+    }
 
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+        View fragmentView = inflater.inflate(R.layout.fragment_skills_manager, container, false);
+        final AppExtension app = (AppExtension) requireActivity().getApplicationContext();
+
         mAdapter = new SkillEditAdapter(app);
 
-        RecyclerView skillListRecyclerView = findViewById(R.id.skills_recyclerView);
+        RecyclerView skillListRecyclerView = fragmentView.findViewById(R.id.skills_recyclerView);
         skillListRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
         skillListRecyclerView.setLayoutManager(llm);
         skillListRecyclerView.setAdapter(mAdapter);
+
+        return fragmentView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        AppExtension app = (AppExtension) this.getApplicationContext();
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
         mAdapter.setList(app.getSkillAdapter().getList());
         mAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_skills, menu);
-        return true;
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_skills, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_action_add_skill:
                 addSkill();
-                return true;
-            case R.id.menu_action_about:
-                CommonUtil.getInstance(SkillsManagerActivity.this).aboutInfo(SkillsManagerActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -73,8 +84,8 @@ public class SkillsManagerActivity extends AppCompatActivity {
     /**
      * Make a new {@link SkillModel} with a unique name, add it to existing players, refresh the adapter and save the data
      */
-    public void addSkill(){
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    private void addSkill(){
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
 
         //Make sure new skill name is unique. Defaults to "Skill X", where X is a number counting up
         String skillName;
@@ -84,7 +95,7 @@ public class SkillsManagerActivity extends AppCompatActivity {
             skillName = "Skill " + itemCount;
             itemCount++;
         }
-        while (!CommonUtil.getInstance(SkillsManagerActivity.this).isSkillNameUnique(skillName, app.getSkillAdapter().getList()));
+        while (!CommonUtil.getInstance().isSkillNameUnique(skillName, app.getSkillAdapter().getList()));
 
         //Make a new SkillModel and add it to each existing player
         SkillModel newSkill = new SkillModel(skillName);

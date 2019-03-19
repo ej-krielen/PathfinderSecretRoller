@@ -28,7 +28,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.PlayerView
     private final AppExtension app;
     private final String skillName;
     // Field for the list of PlayerModels
-    private ArrayList<PlayerModel> players = new ArrayList<>();
+    private ArrayList<PlayerModel> players;
 
     public ResultAdapter(AppExtension app, ArrayList<PlayerModel> players, String skillName) {
         this.app = app;
@@ -61,7 +61,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.PlayerView
                     playerSkill = s;
                 }
             }
-            int diceRoll = CommonUtil.getInstance(app).rollD20();
+            int diceRoll = CommonUtil.getInstance().rollD20();
             int endResult = diceRoll + (playerSkill != null ? playerSkill.getModifier() : 0);
             p.setDiceRoll(diceRoll);
             p.setResult(endResult);
@@ -82,7 +82,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.PlayerView
                 playerSkill = s;
             }
         }
-        int diceRoll = CommonUtil.getInstance(app).rollD20();
+        int diceRoll = CommonUtil.getInstance().rollD20();
         int endResult = diceRoll + (playerSkill != null ? playerSkill.getModifier() : 0);
         player.setDiceRoll(diceRoll);
         player.setResult(endResult);

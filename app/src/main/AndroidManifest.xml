@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="nl.rekijan.pathfindersecretroller">
-
     <application
         android:name=".AppExtension"
         android:allowBackup="true"
@@ -23,47 +22,5 @@
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".ui.fragments.SkillsManagerActivity"
-            android:label="@string/title_activity_skills"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".ui.fragments.PlayersManagerActivity"
-            android:label="@string/title_activity_players"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-        <activity
-            android:name=".ui.fragments.EditPlayerActivity"
-            android:label="@string/title_activity_player"
-            android:parentActivityName=".ui.fragments.PlayersManagerActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.fragments.PlayersManagerActivity" />
-        </activity>
-        <activity
-            android:name=".ui.fragments.EditSkillActivity"
-            android:label="@string/title_activity_skill"
-            android:parentActivityName=".ui.fragments.SkillsManagerActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.fragments.SkillsManagerActivity" />
-        </activity>
-        <activity
-            android:name=".ui.fragments.ResultActivity"
-            android:label="@string/title_activity_main"
-            android:parentActivityName=".MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
-        </activity>
-
     </application>
-
 </manifest>

@@ -1,6 +1,5 @@
 package nl.rekijan.pathfindersecretroller.ui.adapter;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -13,26 +12,23 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
+import nl.rekijan.pathfindersecretroller.MainActivity;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.models.SkillModel;
-import nl.rekijan.pathfindersecretroller.ui.fragments.EditSkillActivity;
-
-import static nl.rekijan.pathfindersecretroller.AppConstants.SKILL_MODEL_POSITION;
+import nl.rekijan.pathfindersecretroller.ui.fragments.EditSkillFragment;
 
 /**
  * Custom RecyclerView.Adapter for the SkillModel class to go to its edit activity
  *
- * @see EditSkillActivity
+ * @see EditSkillFragment
  * @author Erik-Jan Krielen ej.krielen@gmail.com
  * @since 3-3-2019
  */
 public class SkillEditAdapter extends RecyclerView.Adapter<SkillEditAdapter.SkillViewHolder> {
 
-    private final AppExtension app;
     private ArrayList<SkillModel> skills;
 
     public SkillEditAdapter(AppExtension app) {
-        this.app = app;
         skills = app.getSkillAdapter().getList();
     }
 
@@ -78,9 +74,8 @@ public class SkillEditAdapter extends RecyclerView.Adapter<SkillEditAdapter.Skil
         holder.editSkillButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(app, EditSkillActivity.class);
-                intent.putExtra(SKILL_MODEL_POSITION, position);
-                app.startActivity(intent);
+                MainActivity activity = (MainActivity) view.getContext();
+                activity.replaceFragment(EditSkillFragment.newInstance(position));
             }
         });
     }

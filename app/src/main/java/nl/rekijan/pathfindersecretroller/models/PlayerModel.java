@@ -17,7 +17,7 @@ public class PlayerModel implements Parcelable {
     private String success;
     private int result;
     private int diceRoll;
-    private ArrayList<SkillModel> skillModels = new ArrayList<SkillModel>();
+    private ArrayList<SkillModel> skillModels = new ArrayList<>();
 
     // Constructors
     public PlayerModel(String name) {

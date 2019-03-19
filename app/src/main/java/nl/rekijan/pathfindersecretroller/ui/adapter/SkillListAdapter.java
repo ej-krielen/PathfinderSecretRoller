@@ -1,6 +1,5 @@
 package nl.rekijan.pathfindersecretroller.ui.adapter;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
+import nl.rekijan.pathfindersecretroller.MainActivity;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.models.SkillModel;
-import nl.rekijan.pathfindersecretroller.ui.fragments.ResultActivity;
-
-import static nl.rekijan.pathfindersecretroller.AppConstants.SKILL_NAME;
+import nl.rekijan.pathfindersecretroller.ui.fragments.ResultFragment;
 
 /**
  * Custom RecyclerView.Adapter for the SkillModel class to interact with and with minimal info
@@ -29,12 +27,7 @@ import static nl.rekijan.pathfindersecretroller.AppConstants.SKILL_NAME;
  */
 public class SkillListAdapter extends RecyclerView.Adapter<SkillListAdapter.SkillViewHolder> {
 
-    private final AppExtension app;
     private ArrayList<SkillModel> skills = new ArrayList<>();
-
-    public SkillListAdapter(AppExtension app) {
-        this.app = app;
-    }
 
     public void add(SkillModel skill) {
         skills.add(skill);
@@ -107,9 +100,10 @@ public class SkillListAdapter extends RecyclerView.Adapter<SkillListAdapter.Skil
         holder.rollPartyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(app, ResultActivity.class);
-                intent.putExtra(SKILL_NAME, skill.getName());
-                app.startActivity(intent);
+                MainActivity activity = (MainActivity) view.getContext();
+                activity.replaceFragment(ResultFragment.newInstance(skill.getName()));
+                //Make the action bar title the name of the skill so user knows what is being rolled for
+                activity.setActionBarTitle(skill.getName());
             }
         });
     }

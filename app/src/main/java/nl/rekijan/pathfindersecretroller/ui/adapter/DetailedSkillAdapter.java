@@ -18,12 +18,13 @@ import nl.rekijan.pathfindersecretroller.AppExtension;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.listener.GenericTextWatcher;
 import nl.rekijan.pathfindersecretroller.models.SkillModel;
+import nl.rekijan.pathfindersecretroller.ui.fragments.EditPlayerFragment;
 
 /**
  * Custom RecyclerView.Adapter for the SkillModel class with full details
  *
  * @author Erik-Jan Krielen ej.krielen@gmail.com
- * @see nl.rekijan.pathfindersecretroller.ui.fragments.EditPlayerActivity
+ * @see EditPlayerFragment
  * @since 3-3-2019
  */
 public class DetailedSkillAdapter extends RecyclerView.Adapter<DetailedSkillAdapter.SkillViewHolder> {
@@ -87,7 +88,7 @@ public class DetailedSkillAdapter extends RecyclerView.Adapter<DetailedSkillAdap
 
 
         final String[] difficulty = new String[]{app.getString(R.string.proficiency_untrained), app.getString(R.string.proficiency_trained), app.getString(R.string.proficiency_expert), app.getString(R.string.proficiency_master), app.getString(R.string.proficiency_legendary)};
-        ArrayAdapter<String> difficultySpinnerAdapter = new ArrayAdapter<String>(app, R.layout.spinner_item, difficulty);
+        ArrayAdapter<String> difficultySpinnerAdapter = new ArrayAdapter<>(app, R.layout.spinner_item, difficulty);
 
         holder.skillProficiencySpinner.setAdapter(difficultySpinnerAdapter);
         // Drop down layout style
@@ -115,13 +116,9 @@ public class DetailedSkillAdapter extends RecyclerView.Adapter<DetailedSkillAdap
             }
         });
 
-
-
-
         //Add new text watcher
         GenericTextWatcher newModifierWatcher = new GenericTextWatcher(skill, holder.skillModifierEditText);
         holder.skillModifierEditText.setTag(newModifierWatcher);
         holder.skillModifierEditText.addTextChangedListener(newModifierWatcher);
     }
-
 }

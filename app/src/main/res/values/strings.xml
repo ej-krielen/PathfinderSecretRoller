@@ -3,13 +3,7 @@
     <!--App strings-->
     <string name="app_name">Pathfinder Secret Roller</string>
     <string name="splash_title">Pathfinder Secret\nRoller</string>
-
-    <!--Activity strings-->
     <string name="title_activity_main">Secret Roller</string>
-    <string name="title_activity_skills">Skills</string>
-    <string name="title_activity_players">Players</string>
-    <string name="title_activity_skill">Skill</string>
-    <string name="title_activity_player">Player</string>
 
     <!--Menu strings-->
     <string name="menu_title_manage_players">Manage Players</string>
@@ -89,5 +83,4 @@
     <string name="proficiency_expert">Expert</string>
     <string name="proficiency_master">Master</string>
     <string name="proficiency_legendary">Legendary</string>
-
 </resources>

@@ -1,12 +1,17 @@
 package nl.rekijan.pathfindersecretroller.ui.fragments;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
 import nl.rekijan.pathfindersecretroller.R;
@@ -21,38 +26,43 @@ import nl.rekijan.pathfindersecretroller.utilities.CommonUtil;
  * @author Erik-Jan Krielen ej.krielen@gmail.com
  * @since 4-3-2019
  */
-public class PlayersManagerActivity extends AppCompatActivity {
+public class PlayersManagerFragment extends Fragment {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_players_manager);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Back to parent activity
-
-        AppExtension app = (AppExtension) this.getApplicationContext();
-
-        RecyclerView playersRecyclerView = findViewById(R.id.players_recyclerView);
-        playersRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        playersRecyclerView.setLayoutManager(llm);
-        playersRecyclerView.setAdapter(app.getPlayerAdapter());
+    public static Fragment newInstance() {
+        return new PlayersManagerFragment();
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_players, menu);
-        return true;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+        View fragmentView = inflater.inflate(R.layout.fragment_players_manager, container, false);
+        final AppExtension app = (AppExtension) requireActivity().getApplicationContext();
+
+        RecyclerView playersRecyclerView = fragmentView.findViewById(R.id.players_recyclerView);
+        playersRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        playersRecyclerView.setLayoutManager(llm);
+        playersRecyclerView.setAdapter(app.getPlayerAdapter());
+
+        return fragmentView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_players, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_action_add_player:
                 addPlayer();
-                return true;
-            case R.id.menu_action_about:
-                CommonUtil.getInstance(PlayersManagerActivity.this).aboutInfo(PlayersManagerActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -62,8 +72,8 @@ public class PlayersManagerActivity extends AppCompatActivity {
     /**
      * Make a new {@link PlayerModel} with a unique name, add existing skills to it, refresh the adapter and save the data
      */
-    public void addPlayer(){
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    private void addPlayer(){
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
 
         //Make sure new player name is unique. Defaults to "Player X", where X is a number counting up
         String playerName;
@@ -73,7 +83,7 @@ public class PlayersManagerActivity extends AppCompatActivity {
             playerName = "Player " + itemCount;
             itemCount++;
         }
-        while (!CommonUtil.getInstance(PlayersManagerActivity.this).isPlayerNameUnique(playerName, app.getPlayerAdapter().getList()));
+        while (!CommonUtil.getInstance().isPlayerNameUnique(playerName, app.getPlayerAdapter().getList()));
 
         //Make a new PlayerModel and each existing skill to it
         PlayerModel playerModel = new PlayerModel(playerName);

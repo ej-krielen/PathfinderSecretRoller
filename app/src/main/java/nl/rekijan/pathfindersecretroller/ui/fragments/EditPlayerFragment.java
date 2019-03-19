@@ -2,18 +2,23 @@ package nl.rekijan.pathfindersecretroller.ui.fragments;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
+import nl.rekijan.pathfindersecretroller.MainActivity;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.models.PlayerModel;
 import nl.rekijan.pathfindersecretroller.ui.adapter.DetailedSkillAdapter;
@@ -27,46 +32,54 @@ import static nl.rekijan.pathfindersecretroller.AppConstants.PLAYER_MODEL_POSITI
  * @author Erik-Jan Krielen ej.krielen@gmail.com
  * @since 7-3-2019
  */
-public class EditPlayerActivity extends AppCompatActivity {
+public class EditPlayerFragment extends Fragment {
 
-    private DetailedSkillAdapter mAdapter;
     private EditText playerNameEditText;
     private int position;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_player);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true); //Back to parent activity
-
-        AppExtension app = (AppExtension) this.getApplicationContext();
-
-        // Get the Intent that started this activity and extract the information sent with it
-        Intent intent = getIntent();
-        position = intent.getIntExtra(PLAYER_MODEL_POSITION, -1);
-
-        // Capture the layout's EditText and set the proper text
-        playerNameEditText = findViewById(R.id.player_name_editText);
-        PlayerModel player = app.getPlayerAdapter().getList().get(position);
-        playerNameEditText.setText(player.getName());
-
-        mAdapter = new DetailedSkillAdapter(app);
-        mAdapter.setList(player.getSkillModels());
-
-        RecyclerView skillRecyclerView = findViewById(R.id.detailed_skill_recyclerView);
-        skillRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        skillRecyclerView.setLayoutManager(llm);
-        skillRecyclerView.setAdapter(mAdapter);
+    public static EditPlayerFragment newInstance(int position) {
+        EditPlayerFragment fragment = new EditPlayerFragment();
+        Bundle args = new Bundle();
+        args.putInt(PLAYER_MODEL_POSITION, position);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_edit_player, menu);
-        return true;
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            position = getArguments().getInt(PLAYER_MODEL_POSITION);
+        }
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+        View fragmentView = inflater.inflate(R.layout.fragment_edit_player, container, false);
+        final AppExtension app = (AppExtension) requireActivity().getApplicationContext();
+
+        // Capture the layout's EditText and set the proper text
+        playerNameEditText = fragmentView.findViewById(R.id.player_name_editText);
+        PlayerModel player = app.getPlayerAdapter().getList().get(position);
+        playerNameEditText.setText(player.getName());
+
+        DetailedSkillAdapter mAdapter = new DetailedSkillAdapter(app);
+        mAdapter.setList(player.getSkillModels());
+
+        RecyclerView skillRecyclerView = fragmentView.findViewById(R.id.detailed_skill_recyclerView);
+        skillRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager llm = new LinearLayoutManager(getActivity());
+        skillRecyclerView.setLayoutManager(llm);
+        skillRecyclerView.setAdapter(mAdapter);
+        return fragmentView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_edit_player, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -76,9 +89,6 @@ public class EditPlayerActivity extends AppCompatActivity {
                 return true;
             case R.id.menu_action_remove_edit_player:
                 removePlayerConfirm();
-                return true;
-            case R.id.menu_action_about:
-                CommonUtil.getInstance(EditPlayerActivity.this).aboutInfo(EditPlayerActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -90,7 +100,7 @@ public class EditPlayerActivity extends AppCompatActivity {
      * calls {@link #removePlayer()}
      */
     private void removePlayerConfirm() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.AlertDialogStyle);
         builder.setMessage(this.getString(R.string.dialog_delete_message_player))
                 .setTitle(this.getString(R.string.dialog_delete_title_player));
         builder.setPositiveButton(this.getString(R.string.dialog_about_confirm_deletion), new DialogInterface.OnClickListener() {
@@ -113,10 +123,12 @@ public class EditPlayerActivity extends AppCompatActivity {
      * <p>Then close this activity</p>
      * called by {@link #removePlayerConfirm()}
      */
-    public void removePlayer() {
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    private void removePlayer() {
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
         app.getPlayerAdapter().remove(position);
-        finish();
+        MainActivity activity = (MainActivity) getActivity();
+        assert activity != null;
+        activity.removeFragment(this);
     }
 
     /**
@@ -124,11 +136,11 @@ public class EditPlayerActivity extends AppCompatActivity {
      * <p>Save all the data and close this activity</p>
      * <p>Or instead just display an error when user tries to make a duplicate name</p>
      */
-    public void savePlayerInfo() {
-        AppExtension app = (AppExtension) this.getApplicationContext();
+    private void savePlayerInfo() {
+        AppExtension app = (AppExtension) requireActivity().getApplicationContext();
 
         String textFromEditText = playerNameEditText.getText().toString();
-        boolean isNameUnique = CommonUtil.getInstance(EditPlayerActivity.this).isPlayerNameUnique(textFromEditText, app.getPlayerAdapter().getList());
+        boolean isNameUnique = CommonUtil.getInstance().isPlayerNameUnique(textFromEditText, app.getPlayerAdapter().getList());
         if (isNameUnique) {
             app.getPlayerAdapter().getList().get(position).setName(playerNameEditText.getText().toString());
         } else if (!textFromEditText.equals(app.getPlayerAdapter().getList().get(position).getName())) {
@@ -137,6 +149,8 @@ public class EditPlayerActivity extends AppCompatActivity {
 
         app.getPlayerAdapter().notifyDataSetChanged();
         app.saveData();
-        finish();
+        MainActivity activity = (MainActivity) getActivity();
+        assert activity != null;
+        activity.removeFragment(this);
     }
 }

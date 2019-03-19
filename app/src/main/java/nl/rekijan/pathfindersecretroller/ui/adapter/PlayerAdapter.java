@@ -1,6 +1,5 @@
 package nl.rekijan.pathfindersecretroller.ui.adapter;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -14,11 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nl.rekijan.pathfindersecretroller.AppExtension;
+import nl.rekijan.pathfindersecretroller.MainActivity;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.models.PlayerModel;
-import nl.rekijan.pathfindersecretroller.ui.fragments.EditPlayerActivity;
-
-import static nl.rekijan.pathfindersecretroller.AppConstants.PLAYER_MODEL_POSITION;
+import nl.rekijan.pathfindersecretroller.ui.fragments.EditPlayerFragment;
 
 /**
  * Custom RecyclerView.Adapter for the PlayerModel class
@@ -29,13 +27,7 @@ import static nl.rekijan.pathfindersecretroller.AppConstants.PLAYER_MODEL_POSITI
  */
 public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.SkillViewHolder> {
 
-    private final AppExtension app;
-    // Field for the list of PlayerModels
     private ArrayList<PlayerModel> players = new ArrayList<>();
-
-    public PlayerAdapter(AppExtension app) {
-        this.app = app;
-    }
 
     public void add(PlayerModel player) { players.add(player); }
 
@@ -107,9 +99,8 @@ public class PlayerAdapter extends RecyclerView.Adapter<PlayerAdapter.SkillViewH
         holder.editPlayerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(app, EditPlayerActivity.class);
-                intent.putExtra(PLAYER_MODEL_POSITION, position);
-                app.startActivity(intent);
+                MainActivity activity = (MainActivity) view.getContext();
+                activity.replaceFragment(EditPlayerFragment.newInstance(position));
             }
         });
     }

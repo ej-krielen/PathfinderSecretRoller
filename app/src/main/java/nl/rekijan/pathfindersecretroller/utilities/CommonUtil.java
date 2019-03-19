@@ -2,7 +2,6 @@ package nl.rekijan.pathfindersecretroller.utilities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,7 +25,7 @@ public class CommonUtil {
     private static CommonUtil sInstance = null;
     private Random rng;
 
-    public static synchronized CommonUtil getInstance(Context context) {
+    public static synchronized CommonUtil getInstance() {
         if (sInstance == null) {
             sInstance = new CommonUtil();
         }

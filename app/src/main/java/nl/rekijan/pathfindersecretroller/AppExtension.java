@@ -23,7 +23,7 @@ import static nl.rekijan.pathfindersecretroller.AppConstants.GSON_TAG_SKILL_LIST
 import static nl.rekijan.pathfindersecretroller.AppConstants.SHARED_PREF_TAG;
 
 /**
- * /Class for methods and variables that need to be app-wide
+ * Class for methods and variables that need to be app-wide
  *
  * @author Erik-Jan Krielen ej.krielen@gmail.com
  * @since 3-3-2019
@@ -32,12 +32,15 @@ public class AppExtension extends Application {
 
     private SkillListAdapter mSkillListAdapter;
     private PlayerAdapter mPlayerAdapter;
+    private String title;
+    private boolean showBackNavigation;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mSkillListAdapter = new SkillListAdapter(this);
-        mPlayerAdapter = new PlayerAdapter(this);
+        mSkillListAdapter = new SkillListAdapter();
+        mPlayerAdapter = new PlayerAdapter();
+        showBackNavigation = false;
         initializeData();
     }
 
@@ -142,6 +145,10 @@ public class AppExtension extends Application {
         editor.apply();
     }
 
+    public void setActionBarTitle(String title) {
+        this.title = title;
+    }
+
     public int getDCdifficulty() {
         SharedPreferences sharedPreferences = this.getSharedPreferences(SHARED_PREF_TAG, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(DC_DIFFICULTY, 1);
@@ -170,4 +177,17 @@ public class AppExtension extends Application {
     public void setPlayerAdapter(PlayerAdapter mPlayerAdapter) {
         this.mPlayerAdapter = mPlayerAdapter;
     }
+
+    public String getActionBarTitle() {
+        return title;
+    }
+
+    public boolean showBackNavigation() {
+        return showBackNavigation;
+    }
+
+    public void setShowBackNavigation(boolean showBackNavigation) {
+        this.showBackNavigation = showBackNavigation;
+    }
+
 }
