@@ -2,12 +2,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_action_manage_players"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/menu_title_manage_players"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_action_manage_skills"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/menu_title_manage_skills"
         app:showAsAction="ifRoom" />
 </menu>

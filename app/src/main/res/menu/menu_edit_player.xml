@@ -4,12 +4,12 @@
     tools:context="com.rekijan.pathfindersecretroller.MainActivity">
     <item
         android:id="@+id/menu_action_save_edit_player"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/menu_title_save_player"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/menu_action_remove_edit_player"
-        android:orderInCategory="1"
+        android:orderInCategory="3"
         android:title="@string/menu_title_remove_player"
         app:showAsAction="ifRoom" />
 </menu>

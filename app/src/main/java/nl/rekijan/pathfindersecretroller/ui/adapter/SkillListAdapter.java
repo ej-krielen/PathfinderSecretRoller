@@ -103,7 +103,7 @@ public class SkillListAdapter extends RecyclerView.Adapter<SkillListAdapter.Skil
                 MainActivity activity = (MainActivity) view.getContext();
                 activity.replaceFragment(ResultFragment.newInstance(skill.getName()));
                 //Make the action bar title the name of the skill so user knows what is being rolled for
-                activity.setActionBarTitle(skill.getName());
+                activity.setActionBarTitle(activity.getResources().getBoolean(R.bool.isTablet) ? activity.getString(R.string.title_tablet, skill.getName()) : skill.getName());
             }
         });
     }

@@ -140,7 +140,7 @@ public class ResultFragment extends Fragment implements DcDialogPickerListener {
         activity.removeFragment(this);
         activity.replaceFragment(ResultFragment.newInstance(skillName));
         //Make the action bar title the name of the skill so user knows what is being rolled for
-        activity.setActionBarTitle(skillName);
+        activity.setActionBarTitle(getResources().getBoolean(R.bool.isTablet) ? getString(R.string.title_tablet, skillName) : skillName);
 
     }
 

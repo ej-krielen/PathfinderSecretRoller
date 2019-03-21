@@ -4,7 +4,7 @@
     tools:context="com.rekijan.pathfindersecretroller.MainActivity">
     <item
         android:id="@+id/menu_action_add_player"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/menu_title_add_player"
         app:showAsAction="ifRoom" />
 </menu>

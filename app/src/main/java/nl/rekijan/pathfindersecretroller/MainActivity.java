@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import nl.rekijan.pathfindersecretroller.ui.fragments.ResultFragment;
 import nl.rekijan.pathfindersecretroller.ui.fragments.StartFragment;
 import nl.rekijan.pathfindersecretroller.utilities.CommonUtil;
 
@@ -28,6 +29,14 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, StartFragment.newInstance())
                     .commit();
+
+            if (getResources().getBoolean(R.bool.isTablet) && !app.getSkillAdapter().getList().isEmpty()) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.fragment_result, ResultFragment.newInstance(app.getSkillAdapter().getList().get(0).getName()))
+                        .commit();
+                setActionBarTitle(getString(R.string.title_tablet, app.getSkillAdapter().getList().get(0).getName()));
+            }
+
         } else { //Set the action bar title and showing of the back button to previously stored values
             if (!TextUtils.isEmpty(app.getActionBarTitle())) {
                 setActionBarTitle(app.getActionBarTitle());
@@ -44,19 +53,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Replace the current fragment with the new one
+     * Replace the current fragment with the new one<br>
+     *     If the device has a large screen and the new fragment is {@link ResultFragment} then replace it in the right fragment view
      *
      * @param newFragment the new fragment to add
      */
     public void replaceFragment(Fragment newFragment) {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, newFragment);
-        transaction.addToBackStack(null);
-        transaction.commit();
-        //Enable the back button in action bar
-        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        AppExtension app = (AppExtension) this.getApplicationContext();
-        app.setShowBackNavigation(true);
+        if (newFragment instanceof ResultFragment && getResources().getBoolean(R.bool.isTablet)) {
+            transaction.replace(R.id.fragment_result, newFragment);
+            transaction.commit();
+        } else {
+            transaction.replace(R.id.fragment_container, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
+            //Enable the back button in action bar
+            if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            AppExtension app = (AppExtension) this.getApplicationContext();
+            app.setShowBackNavigation(true);
+        }
+
     }
 
     @Override
@@ -67,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
         app.setShowBackNavigation(getSupportFragmentManager().getBackStackEntryCount() > 1);
         getSupportFragmentManager().popBackStack();
         setActionBarTitle(app.getActionBarTitle());
+        if (getSupportActionBar() != null && getSupportFragmentManager().getBackStackEntryCount() == 1 && !getResources().getBoolean(R.bool.isTablet)) {
+            setActionBarTitle(getString(R.string.title_activity_main)); //Reset title if all other fragments are gone
+        }
         return true;
     }
 
