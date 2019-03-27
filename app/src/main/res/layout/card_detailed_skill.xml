@@ -45,6 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/small_padding"
             android:inputType="number"
+            android:imeOptions="actionDone"
+            android:selectAllOnFocus="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline2"
             app:layout_constraintTop_toTopOf="parent" />

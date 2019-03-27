@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
             }
             if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(app.showBackNavigation());
         }
+
+        CommonUtil.getInstance().hideSoftKeyboard(this);
     }
 
     @Override

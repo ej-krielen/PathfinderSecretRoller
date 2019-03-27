@@ -2,10 +2,13 @@ package nl.rekijan.pathfindersecretroller.utilities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -108,5 +111,18 @@ public class CommonUtil {
 
     public int rollD20() {
         return rollDice(20);
+    }
+
+    /**
+     * Hides the softKeyboard
+     *
+     * @param activity calling Activity
+     */
+    public void hideSoftKeyboard(Activity activity) {
+        if (activity.getCurrentFocus() != null) {
+            View view = activity.getCurrentFocus();
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

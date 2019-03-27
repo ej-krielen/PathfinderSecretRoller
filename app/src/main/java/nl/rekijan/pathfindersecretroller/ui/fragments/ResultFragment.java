@@ -22,6 +22,7 @@ import nl.rekijan.pathfindersecretroller.MainActivity;
 import nl.rekijan.pathfindersecretroller.R;
 import nl.rekijan.pathfindersecretroller.listener.DcDialogPickerListener;
 import nl.rekijan.pathfindersecretroller.ui.adapter.ResultAdapter;
+import nl.rekijan.pathfindersecretroller.utilities.CommonUtil;
 import nl.rekijan.pathfindersecretroller.utilities.DcPickerDialog;
 
 import static nl.rekijan.pathfindersecretroller.AppConstants.SKILL_NAME;
@@ -52,6 +53,7 @@ public class ResultFragment extends Fragment implements DcDialogPickerListener {
             skillName = getArguments().getString(SKILL_NAME);
         }
         setHasOptionsMenu(true);
+        CommonUtil.getInstance().hideSoftKeyboard(requireActivity());
     }
 
     @Override
